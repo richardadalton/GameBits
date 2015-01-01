@@ -31,14 +31,15 @@ def open(item):
         tryOpenDoor()
         return
     
-    if item == 'box':
-        tryOpenBox()
+    elif item == 'box':
+        if 'box' in inventory:
+            tryOpenBox()
+        else:
+            print 'You don\'t have the box'
         return
-    
-    if exists(item):
-        print 'You can\'t open a {0}'.format(item)
     else:
-        print 'There is no {0} here'.format(item)
+        cantOpen(item)
+    
 
 def unlock(item):
     if item == 'door':
@@ -73,6 +74,13 @@ def tryOpenBox():
     else:            
         find('key')
         boxIsOpen = True
+
+def cantOpen(item):
+    if exists(item):
+        print 'You can\'t open a {0}'.format(item)
+    else:
+        print 'There is no {0} here'.format(item)
+
 
 def tryUnlockDoor():
     global doorIsLocked
