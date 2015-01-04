@@ -28,6 +28,15 @@ class Character:
             print 'You picked up the {0}'.format(itemKey)
             self.Items[itemKey] = pickedUp
 
+    def Open(self, itemKey):
+        if self.Items.has_key(itemKey):
+            item  = self.Items[itemKey]
+            item.OpenIn(self.Location)
+        else:
+            self.Location.TryOpen(itemKey)
+
+        
+
 # A location within the game, e.g. a Room
 # We can pick up items from a location
 class Location:
@@ -41,6 +50,13 @@ class Location:
         else:
             print 'There is no {0} here'.format(itemKey)
             return None
+
+    def TryOpen(self, itemKey):
+        if self.Items.has_key(itemKey):
+            item = self.Items[itemKey]
+            item.OpenIn(self)
+        else:
+            print 'There is no {0} here'.format(itemKey)
 
     def Put(self, item):
         self.Items[item.Description] = item
@@ -59,30 +75,49 @@ class Item:
         return self.Description
 
     def TryPickUpFrom(self, location):
+        self.Held = True
         return location.Take(self)
+
+    def OpenIn(self, location):
+        print 'You can\'t open the {0}'.format(self.Description)
+
 
 # A Box is a special kind of item that can contain other items
 # Opening the box reveals the items it contains
 # A box can be picked up and opened later
 class Box(Item):
-    isOpen = False
-
     def __init__(self, items):
         Item.__init__(self,'box')
+        self.IsOpen = False
         self.Items = items
+
+    def OpenIn(self, location):
+        if self.IsOpen:
+            print 'It\'s already open'
+        elif not self.Held:
+            print 'You don\'t have the box'
+        else:
+            for item in self.Items:
+                location.Put(item)
 
 # A Door is a special kind of item that can be closed and locked
 # You can not pick up a door
-class Door(Item):
-    isLocked = True
-    isOpen = False
-    
+class Door(Item):    
     def __init__(self):
         Item.__init__(self,'door')
+        self.IsLocked = True
+        self.IsOpen = False
 
     def TryPickUpFrom(self, location):
         print 'You can\'t pick up a door'
         return None
+    
+    def OpenIn(self, location):
+        if self.IsLocked == True:
+            print 'It\'s Locked'
+        else:
+            self.IsOpen = True
+            print 'You\'ve opened the door, you win.'
 
 
 # Create the Initial starting position for the game
