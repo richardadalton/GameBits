@@ -35,6 +35,14 @@ class Character:
         else:
             self.Location.TryOpen(itemKey)
 
+    def Unlock(self, itemKey, withItemKey):
+        if not self.Items.has_key(withItemKey):
+            print 'You don\'t have the {0}'.format(withItemKey)            
+        elif self.Items.has_key(itemKey):
+            item  = self.Items[itemKey]
+            item.Unlock(withItemKey, self.Location)
+        else:
+            self.Location.TryUnlock(itemKey, withItemKey)
         
 
 # A location within the game, e.g. a Room
@@ -55,6 +63,13 @@ class Location:
         if self.Items.has_key(itemKey):
             item = self.Items[itemKey]
             item.OpenIn(self)
+        else:
+            print 'There is no {0} here'.format(itemKey)
+
+    def TryUnlock(self, itemKey, withItemKey):
+        if self.Items.has_key(itemKey):
+            item = self.Items[itemKey]
+            item.Unlock(withItemKey, self)
         else:
             print 'There is no {0} here'.format(itemKey)
 
@@ -81,6 +96,9 @@ class Item:
     def OpenIn(self, location):
         print 'You can\'t open the {0}'.format(self.Description)
 
+    def Unlock(self, withItemKey, location):
+        print 'You can\'t unlock the {0}'.format(self.Description)
+
 
 # A Box is a special kind of item that can contain other items
 # Opening the box reveals the items it contains
@@ -99,6 +117,9 @@ class Box(Item):
         else:
             for item in self.Items:
                 location.Put(item)
+            self.IsOpen = True
+            print 'You\'ve opened the box'
+
 
 # A Door is a special kind of item that can be closed and locked
 # You can not pick up a door
@@ -113,11 +134,20 @@ class Door(Item):
         return None
     
     def OpenIn(self, location):
-        if self.IsLocked == True:
+        if self.IsLocked:
             print 'It\'s Locked'
         else:
             self.IsOpen = True
             print 'You\'ve opened the door, you win.'
+
+    def Unlock(self, withItemKey, location):
+        if not self.IsLocked:
+            print 'It\'s not locked'
+        elif withItemKey != 'key':
+            print 'You can\'t unlock the door with the {0}'.format(withItemKey)
+        else:
+            self.IsLocked = False
+            print 'You unclocked the door'
 
 
 # Create the Initial starting position for the game
