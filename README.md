@@ -30,6 +30,11 @@ means of learning to code, and have fun.
   * Lunar Lander
   * Space Invaders
   * Horse Racing
+  * Scorched Earth (Angry Birds)
+    
+### Scrolling
+  * Flappy Bird
+  * Parallax Scroll
     
 ### AI Games
   * Guessing Games Revisited
