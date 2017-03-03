@@ -23,6 +23,15 @@ snake_length = 1
 pygame.init()
 screen = pygame.display.set_mode((width * cell_size, height * cell_size))
 clock = pygame.time.Clock()
+myfont = pygame.font.SysFont("arial", 15)
+
+
+def draw_score(score):
+    rectangle = (0, 0, 200, 19)
+    pygame.draw.rect(screen, black, rectangle)
+    label = myfont.render(str(score), 1, (255, 255, 255))
+    screen.blit(label, ((width / 2) * cell_size, 2))
+    pygame.draw.line(screen, white, (0, 19), (200, 19))
 
 
 def draw_head():
@@ -43,10 +52,10 @@ def move_snake(pos):
         new_x = 0
 
     new_y = pos[1] + vy
-    if new_y < 0:
+    if new_y < 2:
         new_y = height - 1
     if new_y >= height:
-        new_y = 0
+        new_y = 2
 
     return (new_x, new_y)
 
@@ -56,6 +65,7 @@ def draw_pill():
 
 
 # Game Loop
+score = 0
 game_over = False
 while not game_over:
     for event in pygame.event.get():
@@ -84,12 +94,14 @@ while not game_over:
     if pill is None:
         if random() < 0.3:
             pillx = randint(1, width - 1)
-            pilly = randint(1, height - 1)
-            pill = (pillx, pilly)
-            draw_pill()
+            pilly = randint(2, height - 1)
+            if (pillx, pilly) not in snake_bits:
+                pill = (pillx, pilly)
+                draw_pill()
     else:
         if (snake_pos[0], snake_pos[1]) == pill:
             snake_length += 1
+            score += 1
             pill = None
 
     snake_pos = move_snake(snake_pos)
@@ -99,6 +111,7 @@ while not game_over:
 
     clock.tick(10)
     draw_head()
+    draw_score(score)
     pygame.display.update()
 
 print "Game Over"
