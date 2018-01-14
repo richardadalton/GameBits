@@ -114,4 +114,4 @@ while not game_over:
     draw_score(score)
     pygame.display.update()
 
-print "Game Over"
+print("Game Over")
